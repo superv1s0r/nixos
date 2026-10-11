@@ -31,7 +31,7 @@ mount /dev/nvme0n1p1 /mnt/boot
 
 ```sh
 nix-shell -p git
-git clone https://github.com/<me>/<repo> /mnt/etc/nixos
+git clone https://github.com/superv1s0r/nixos.git /mnt/etc/nixos
 nixos-generate-config --root /mnt --show-hardware-config > /mnt/etc/nixos/hosts/lnv/hardware-configuration.nix
 ```
 
