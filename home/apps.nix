@@ -8,6 +8,15 @@
     pavucontrol
     networkmanagerapplet
     keepassxc
+
+    telegram-desktop
+    spotify
+    vlc
+    reaper
+    feather # Monero wallet
+    postman
+    burpsuite
+    jetbrains.pycharm # unified PyCharm (Community was merged into it)
   ];
 
   # Without a cursor theme some apps show a tiny or missing cursor.
