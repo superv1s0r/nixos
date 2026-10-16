@@ -2,7 +2,6 @@
 {
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
-    auto-optimise-store = true;
     trusted-users = [ "root" "@wheel" ];
   };
   nix.gc = {
@@ -10,7 +9,7 @@
     dates = "weekly";
     options = "--delete-older-than 14d";
   };
-  nix.optimise.automatic = true;
+  nix.optimise.automatic = true; # dedupe on a timer instead of during every build
 
   nixpkgs.config.allowUnfree = true; # Rider
 }
