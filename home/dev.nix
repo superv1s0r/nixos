@@ -1,7 +1,7 @@
 { pkgs, ... }:
 let
-  # VERIFY: sdk_8_0 may be dropped from nixpkgs after .NET 8 EOL (Nov 2026).
-  dotnet = with pkgs.dotnetCorePackages; combinePackages [ sdk_8_0 sdk_9_0 ];
+  # 10 is the current LTS. VERIFY: sdk_8_0 may be dropped from nixpkgs after .NET 8 EOL (Nov 2026).
+  dotnet = with pkgs.dotnetCorePackages; combinePackages [ sdk_8_0 sdk_9_0 sdk_10_0 ];
 in
 {
   home.packages = with pkgs; [
@@ -16,6 +16,7 @@ in
     ripgrep
     fd
     unzip
+    tree-sitter # :TSInstall on nvim-treesitter main
   ];
 
   # Rider and `dotnet` tools locate the SDK via DOTNET_ROOT.

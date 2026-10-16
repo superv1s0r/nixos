@@ -28,7 +28,7 @@
     templates = {
       csharp = {
         path = ./templates/csharp;
-        description = "C# / .NET 8+9 devShell";
+        description = "C# / .NET 8+9+10 devShell";
       };
       python = {
         path = ./templates/python;
