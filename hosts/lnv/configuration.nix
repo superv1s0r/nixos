@@ -9,6 +9,7 @@
     ../../modules/nixos/power.nix
     ../../modules/nixos/dev.nix
     ../../modules/nixos/nix.nix
+    ../../modules/nixos/apps.nix
   ];
 
   networking.hostName = "miller-lnv";
@@ -28,7 +29,7 @@
   users.users.miller = {
     isNormalUser = true;
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "wireshark" ];
   };
 
   environment.systemPackages = with pkgs; [ git vim wget curl btrfs-progs ];
