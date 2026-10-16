@@ -25,6 +25,7 @@ mount -o subvol=@home,$o /dev/nvme0n1p2 /mnt/home
 mount -o subvol=@nix,$o  /dev/nvme0n1p2 /mnt/nix
 mount -o subvol=@log,$o  /dev/nvme0n1p2 /mnt/var/log
 mount /dev/nvme0n1p1 /mnt/boot
+btrfs subvolume create /mnt/home/.snapshots   # snapper needs this to exist
 ```
 
 ## 2. Get the config
