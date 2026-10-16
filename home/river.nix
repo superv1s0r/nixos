@@ -1,12 +1,26 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   home.packages = with pkgs; [ brightnessctl playerctl ];
+
+  # greetd starts river without a login shell, so this target stands in for
+  # what a full DE does: it pulls in graphical-session.target, which starts
+  # kanshi, swayidle, waybar and the polkit agent, and stops them on logout.
+  systemd.user.targets.river-session.Unit = {
+    Description = "river compositor session";
+    BindsTo = [ "graphical-session.target" ];
+    Wants = [ "graphical-session-pre.target" ];
+    After = [ "graphical-session-pre.target" ];
+  };
 
   # river runs ~/.config/river/init (an executable script) at startup.
   xdg.configFile."river/init" = {
     executable = true;
     text = ''
       #!/bin/sh
+      # Not a login shell: load home.sessionVariables (DOTNET_ROOT for Rider, EDITOR)
+      # so apps launched from fuzzel inherit them.
+      . ${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh
+
       mod=Super
 
       riverctl map normal $mod Return spawn alacritty
@@ -22,7 +36,7 @@
       riverctl map normal $mod H send-layout-cmd rivertile "main-ratio -0.05"
       riverctl map normal $mod L send-layout-cmd rivertile "main-ratio +0.05"
       riverctl map normal $mod F toggle-fullscreen
-      riverctl map normal $mod Space toggle-float
+      riverctl map normal $mod+Shift Space toggle-float # Super+Space switches keyboard layout
       riverctl map normal $mod Period focus-output next
       riverctl map normal $mod+Shift Period send-to-output next
       riverctl map-pointer normal $mod BTN_LEFT move-view
@@ -53,7 +67,7 @@
       riverctl map normal Shift Print spawn 'grim - | wl-copy'
 
       riverctl set-repeat 50 300
-      riverctl keyboard-layout us
+      riverctl keyboard-layout -options grp:win_space_toggle us,ru,es # Super+Space cycles, as on GNOME
       riverctl focus-follows-cursor normal
       for pad in $(riverctl list-inputs | grep -i touchpad); do
         riverctl input "$pad" tap enabled
@@ -61,11 +75,10 @@
         riverctl input "$pad" disable-while-typing enabled
       done
 
-      # Portals and systemd user services (kanshi, swayidle, mako) need the Wayland env.
+      # Portals and user services need the Wayland env before the session target starts them.
       export XDG_CURRENT_DESKTOP=river
-      dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-      systemctl --user restart kanshi swayidle mako
-      waybar &
+      dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP
+      systemctl --user start river-session.target
 
       riverctl default-layout rivertile
       exec rivertile -view-padding 4 -outer-padding 4

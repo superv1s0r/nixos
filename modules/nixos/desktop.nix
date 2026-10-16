@@ -1,4 +1,11 @@
 { pkgs, ... }:
+let
+  # Stop the session target on logout so kanshi/swayidle/waybar don't linger.
+  river-session = pkgs.writeShellScript "river-session" ''
+    river
+    systemctl --user stop river-session.target
+  '';
+in
 {
   # river 0.3.x was renamed to river-classic; the binary is still `river`.
   programs.river-classic.enable = true;
@@ -6,11 +13,12 @@
   services.greetd = {
     enable = true;
     settings.default_session.command =
-      "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd river";
+      "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${river-session}";
   };
 
   security.pam.services.swaylock = { }; # lets swaylock verify the password
-  security.polkit.enable = true;
+  security.polkit.enable = true; # agent runs as a user service (home/apps.nix)
+  services.blueman.enable = true; # bluetooth tray/GUI
 
   xdg.portal = {
     enable = true;
