@@ -7,7 +7,35 @@
     wlr-randr
     pavucontrol
     networkmanagerapplet
+    keepassxc
   ];
+
+  # Without a cursor theme some apps show a tiny or missing cursor.
+  home.pointerCursor = {
+    enable = true;
+    package = pkgs.adwaita-icon-theme;
+    name = "Adwaita";
+    size = 24;
+    gtk.enable = true;
+  };
+  gtk = {
+    enable = true;
+    colorScheme = "dark";
+  };
+
+  # No DE means no polkit agent; without one, GUI password prompts silently fail.
+  systemd.user.services.polkit-gnome-agent = {
+    Unit = {
+      Description = "polkit authentication agent";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 
   programs.firefox.enable = true;
 
@@ -37,14 +65,14 @@
     };
   };
 
-  # Started from the river init script, not systemd, so it gets the Wayland env.
   programs.waybar = {
     enable = true;
+    systemd.enable = true; # started by river-session.target
     settings.main = {
       layer = "top";
       position = "top";
       height = 26;
-      modules-left = [ "river/tags" "river/mode" ];
+      modules-left = [ "river/tags" "river/mode" "river/layout" ];
       modules-center = [ "river/window" ];
       modules-right = [ "tray" "pulseaudio" "network" "backlight" "battery" "power-profiles-daemon" "clock" ];
       clock.format = "{:%a %d %b  %H:%M}";
