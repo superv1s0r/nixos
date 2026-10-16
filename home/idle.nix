@@ -1,12 +1,7 @@
 { pkgs, ... }:
 let
   lock = "${pkgs.swaylock}/bin/swaylock -f";
-  wlr-randr = "${pkgs.wlr-randr}/bin/wlr-randr";
-  # Turn off every enabled output; on resume kanshi re-applies the right profile.
-  screensOff = pkgs.writeShellScript "screens-off" ''
-    ${wlr-randr} --json | ${pkgs.jq}/bin/jq -r '.[] | select(.enabled) | .name' \
-      | while read -r o; do ${wlr-randr} --output "$o" --off; done
-  '';
+  wlopm = "${pkgs.wlopm}/bin/wlopm";
 in
 {
   programs.swaylock = {
@@ -22,10 +17,12 @@ in
     events = {
       before-sleep = lock;
       lock = lock;
+      after-resume = "${wlopm} --on '*'";
     };
     timeouts = [
       { timeout = 300; command = lock; }
-      { timeout = 600; command = "${screensOff}"; resumeCommand = "${pkgs.systemd}/bin/systemctl --user restart kanshi"; }
+      # wlopm powers screens off (DPMS) without disabling them, so river keeps windows where they are.
+      { timeout = 600; command = "${wlopm} --off '*'"; resumeCommand = "${wlopm} --on '*'"; }
       { timeout = 1800; command = "${pkgs.systemd}/bin/systemctl suspend"; }
     ];
   };
