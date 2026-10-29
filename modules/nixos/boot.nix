@@ -4,7 +4,7 @@
   boot.loader.systemd-boot.configurationLimit = 15; # keep /boot (1G) from filling
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Load amdgpu in initrd: native resolution from early boot (tuigreet, LUKS prompt).
+  # Load amdgpu in initrd: native resolution from early boot (greeter, LUKS prompt).
   hardware.amdgpu.initrd.enable = true;
 
   # Newest amdgpu fixes for Barcelo.

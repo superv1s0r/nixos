@@ -53,7 +53,7 @@ reboot
 
 ## 4. After first boot
 
-Log in through tuigreet. It starts river.
+Log in through ReGreet (graphical greeter). It starts river.
 
 ```sh
 sudo mv /etc/nixos ~/nixos-config && sudo chown -R miller:users ~/nixos-config

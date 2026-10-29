@@ -5,15 +5,45 @@ let
     river
     systemctl --user stop river-session.target
   '';
+
+  # Login entry for ReGreet, which reads wayland-sessions/*.desktop.
+  river-session-entry = (pkgs.writeTextDir "share/wayland-sessions/river-session.desktop" ''
+    [Desktop Entry]
+    Name=River
+    Comment=river compositor (with session target)
+    Exec=${river-session}
+    Type=Application
+  '').overrideAttrs { passthru.providedSessions = [ "river-session" ]; };
 in
 {
   # river 0.3.x was renamed to river-classic; the binary is still `river`.
   programs.river-classic.enable = true;
 
-  services.greetd = {
+  # Graphical greeter on greetd (runs inside cage). Remembers the last user and session.
+  services.displayManager.sessionPackages = [ river-session-entry ];
+  services.displayManager.defaultSession = "river-session";
+  programs.regreet = {
     enable = true;
-    settings.default_session.command =
-      "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${river-session}";
+    theme = { name = "Adwaita-dark"; package = pkgs.gnome-themes-extra; };
+    font = { name = "FiraCode Nerd Font"; size = 12; package = pkgs.nerd-fonts.fira-code; };
+    settings = {
+      # Copy any image here (root-owned; the greeter can't read ~/Pictures).
+      background = { path = "/etc/greetd/background"; fit = "Cover"; };
+      GTK.application_prefer_dark_theme = true;
+      appearance.greeting_msg = "Welcome back";
+      widget.clock = { format = "%a %d %b  %H:%M"; resolution = "1s"; };
+    };
+    extraCss = ''
+      window { background-color: #1e1e2e; }
+      frame, .background > box > frame {
+        background-color: rgba(30, 30, 46, 0.85);
+        border: 1px solid #45475a;
+        border-radius: 14px;
+        padding: 18px;
+      }
+      button.suggested-action { background: #89b4fa; color: #1e1e2e; border-radius: 8px; }
+      entry { border-radius: 8px; }
+    '';
   };
 
   security.pam.services.swaylock = { }; # lets swaylock verify the password
