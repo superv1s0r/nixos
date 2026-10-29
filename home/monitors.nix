@@ -13,6 +13,13 @@
         ];
       }
       {
+        # virt-manager/QEMU test VM
+        profile.name = "vm";
+        profile.outputs = [
+          { criteria = "Virtual-1"; mode = "1920x1080"; }
+        ];
+      }
+      {
         profile.name = "laptop";
         profile.outputs = [
           { criteria = "eDP-1"; status = "enable"; }
