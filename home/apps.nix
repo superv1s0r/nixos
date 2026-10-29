@@ -9,6 +9,7 @@
     networkmanagerapplet
     keepassxc
 
+    fastfetch
     telegram-desktop
     spotify
     vlc
