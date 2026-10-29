@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
   # Stop the session target on logout so kanshi/swayidle/waybar don't linger.
   river-session = pkgs.writeShellScript "river-session" ''
@@ -22,6 +22,13 @@ in
   # Graphical greeter on greetd (runs inside cage). Remembers the last user and session.
   services.displayManager.sessionPackages = [ river-session-entry ];
   services.displayManager.defaultSession = "river-session";
+  # Same command programs.regreet sets, but first force 1920x1080 on the VM's
+  # output (kanshi only runs after login). On the laptop wlr-randr just fails.
+  services.greetd.settings.default_session.command = lib.mkForce (toString [
+    "${pkgs.cage}/bin/cage -s -mlast -- ${pkgs.bash}/bin/sh -c"
+    "'${pkgs.wlr-randr}/bin/wlr-randr --output Virtual-1 --mode 1920x1080 || true;"
+    "exec ${lib.getExe config.programs.regreet.package}'"
+  ]);
   programs.regreet = {
     enable = true;
     theme = { name = "Adwaita-dark"; package = pkgs.gnome-themes-extra; };
