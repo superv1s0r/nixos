@@ -127,7 +127,7 @@ in
       };
       "custom/power" = { format = "⏻"; tooltip-format = "Shut down"; on-click = "${confirm} 'Shut down' systemctl poweroff"; };
       "custom/reboot" = { format = "󰜉"; tooltip-format = "Restart"; on-click = "${confirm} Restart systemctl reboot"; };
-      "custom/suspend" = { format = "󰤄"; tooltip-format = "Sleep"; on-click = "systemctl suspend"; };
+      "custom/suspend" = { format = "󰤄"; tooltip-format = "Sleep"; on-click = "systemd-detect-virt -q || systemctl suspend"; # no-op in VMs, see idle.nix };
       "custom/logout" = { format = "󰍃"; tooltip-format = "Log out"; on-click = "riverctl exit"; };
       "custom/lock" = { format = "󰌾"; tooltip-format = "Lock"; on-click = "loginctl lock-session"; };
       "custom/kb" = {
