@@ -81,10 +81,14 @@
     settings.main = {
       layer = "top";
       position = "top";
-      height = 26;
-      modules-left = [ "river/tags" "river/mode" "river/layout" ];
+      height = 30;
+      spacing = 6;
+      margin-top = 4;
+      margin-left = 6;
+      margin-right = 6;
+      modules-left = [ "river/tags" ];
       modules-center = [ "river/window" ];
-      modules-right = [ "tray" "pulseaudio" "pulseaudio/slider" "network" "backlight" "battery" "power-profiles-daemon" "clock" ];
+      modules-right = [ "tray" "custom/kb" "pulseaudio" "pulseaudio/slider" "network" "backlight" "battery" "power-profiles-daemon" "clock" ];
       clock.format = "{:%a %d %b  %H:%M}";
       battery = {
         format = "{icon} {capacity}%";
@@ -106,23 +110,48 @@
         on-click-right = "pavucontrol"; # floats, see river.nix
       };
       "pulseaudio/slider" = { min = 0; max = 100; };
+      # Written by kb-layout (river.nix), which sends RTMIN+8 on every switch.
+      "custom/kb" = {
+        exec = "tr a-z A-Z < $XDG_RUNTIME_DIR/kb-layout";
+        interval = "once";
+        signal = 8;
+        format = "󰌌 {}";
+        tooltip = false;
+      };
       backlight.format = "󰃠 {percent}%";
       "river/window".max-length = 60;
     };
     style = ''
-      * { font-family: "FiraCode Nerd Font"; font-size: 12px; }
-      window#waybar { background: #1e1e2e; color: #cdd6f4; }
-      #tags button { padding: 0 6px; color: #6c7086; }
+      * { font-family: "FiraCode Nerd Font"; font-size: 12px; border: none; min-height: 0; }
+      window#waybar { background: transparent; color: #cdd6f4; }
+      tooltip { background: #1e1e2e; border: 1px solid #45475a; border-radius: 8px; }
+
+      /* Each group sits on its own rounded pill. */
+      #tags, #window, #tray, #custom-kb, #pulseaudio, #pulseaudio-slider,
+      #network, #backlight, #battery, #power-profiles-daemon, #clock {
+        background: #1e1e2e; border-radius: 10px; padding: 0 10px;
+      }
+      window#waybar.empty #window { background: transparent; }
+
+      #tags { padding: 0 2px; }
+      #tags button { padding: 0 6px; margin: 3px 1px; color: #6c7086; border-radius: 7px; }
       #tags button.occupied { color: #cdd6f4; }
       #tags button.focused { color: #1e1e2e; background: #89b4fa; }
-      #tags button.urgent { background: #f38ba8; }
-      #clock, #battery, #network, #pulseaudio, #backlight, #tray, #power-profiles-daemon { padding: 0 8px; }
-      #pulseaudio-slider { padding: 0 8px 0 0; }
-      #pulseaudio-slider slider { min-height: 0; min-width: 0; background: #cdd6f4; border-radius: 6px; box-shadow: none; }
-      #pulseaudio-slider trough { min-width: 80px; min-height: 6px; background: #45475a; border-radius: 6px; }
-      #pulseaudio-slider highlight { min-height: 6px; background: #89b4fa; border-radius: 6px; }
+      #tags button.urgent { color: #1e1e2e; background: #f38ba8; }
+
+      #custom-kb { color: #f9e2af; font-weight: bold; }
+      #pulseaudio { color: #89b4fa; border-radius: 10px 0 0 10px; padding-right: 4px; }
+      #pulseaudio.muted { color: #6c7086; }
+      #pulseaudio-slider { border-radius: 0 10px 10px 0; padding-left: 0; margin-left: -6px; }
+      #pulseaudio-slider slider { min-height: 10px; min-width: 10px; background: #cdd6f4; border-radius: 5px; box-shadow: none; }
+      #pulseaudio-slider trough { min-width: 90px; min-height: 4px; background: #45475a; border-radius: 4px; }
+      #pulseaudio-slider highlight { min-height: 4px; background: #89b4fa; border-radius: 4px; }
+      #network { color: #a6e3a1; }
+      #backlight { color: #f9e2af; }
+      #battery { color: #a6e3a1; }
       #battery.warning { color: #f9e2af; }
       #battery.critical { color: #f38ba8; }
+      #clock { color: #cba6f7; }
     '';
   };
 }

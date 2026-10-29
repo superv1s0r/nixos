@@ -1,4 +1,22 @@
 { config, pkgs, ... }:
+let
+  # river can't tell clients which xkb group is active, so layouts are switched
+  # one at a time here and the current one is written out for waybar.
+  kb-layout = pkgs.writeShellScript "kb-layout" ''
+    state="$XDG_RUNTIME_DIR/kb-layout"
+    layouts="us es ru"
+    case "$1" in
+      next)
+        cur=$(cat "$state" 2>/dev/null || echo us)
+        next=$(echo "$layouts $layouts" | tr ' ' '\n' | grep -A1 -x "$cur" | sed -n 2p)
+        ;;
+      *) next=''${1:-us} ;;
+    esac
+    riverctl keyboard-layout "$next"
+    echo "$next" > "$state"
+    pkill -RTMIN+8 waybar || true
+  '';
+in
 {
   home.packages = with pkgs; [ brightnessctl playerctl ];
 
@@ -36,7 +54,7 @@
       riverctl map normal $mod H send-layout-cmd rivertile "main-ratio -0.05"
       riverctl map normal $mod L send-layout-cmd rivertile "main-ratio +0.05"
       riverctl map normal $mod F toggle-fullscreen
-      riverctl map normal $mod+Shift Space toggle-float # Super+Space switches keyboard layout
+      riverctl map normal $mod Space toggle-float # Super+Shift+Space switches keyboard layout
       riverctl map normal $mod Period focus-output next
       riverctl map normal $mod+Shift Period send-to-output next
       riverctl map-pointer normal $mod BTN_LEFT move-view
@@ -71,7 +89,8 @@
       riverctl map normal Shift Print spawn 'grim - | wl-copy'
 
       riverctl set-repeat 50 300
-      riverctl keyboard-layout -options grp:win_space_toggle us,ru,es # Super+Space cycles, as on GNOME
+      ${kb-layout} us
+      riverctl map normal $mod+Shift Space spawn "${kb-layout} next" # us -> es -> ru
       riverctl focus-follows-cursor normal
       for pad in $(riverctl list-inputs | grep -i touchpad); do
         riverctl input "$pad" tap enabled
