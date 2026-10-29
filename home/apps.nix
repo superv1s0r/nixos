@@ -83,7 +83,7 @@
       height = 26;
       modules-left = [ "river/tags" "river/mode" "river/layout" ];
       modules-center = [ "river/window" ];
-      modules-right = [ "tray" "pulseaudio" "network" "backlight" "battery" "power-profiles-daemon" "clock" ];
+      modules-right = [ "tray" "pulseaudio" "pulseaudio/slider" "network" "backlight" "battery" "power-profiles-daemon" "clock" ];
       clock.format = "{:%a %d %b  %H:%M}";
       battery = {
         format = "{icon} {capacity}%";
@@ -100,8 +100,11 @@
         format = "{icon} {volume}%";
         format-muted = "󰝟";
         format-icons.default = [ "" "" "" ];
-        on-click = "pavucontrol";
+        scroll-step = 5;
+        on-click = "wpctl set-mute @DEFAULT_SINK@ toggle";
+        on-click-right = "pavucontrol"; # floats, see river.nix
       };
+      "pulseaudio/slider" = { min = 0; max = 100; };
       backlight.format = "󰃠 {percent}%";
       "river/window".max-length = 60;
     };
@@ -113,6 +116,10 @@
       #tags button.focused { color: #1e1e2e; background: #89b4fa; }
       #tags button.urgent { background: #f38ba8; }
       #clock, #battery, #network, #pulseaudio, #backlight, #tray, #power-profiles-daemon { padding: 0 8px; }
+      #pulseaudio-slider { padding: 0 8px 0 0; }
+      #pulseaudio-slider slider { min-height: 0; min-width: 0; background: #cdd6f4; border-radius: 6px; box-shadow: none; }
+      #pulseaudio-slider trough { min-width: 80px; min-height: 6px; background: #45475a; border-radius: 6px; }
+      #pulseaudio-slider highlight { min-height: 6px; background: #89b4fa; border-radius: 6px; }
       #battery.warning { color: #f9e2af; }
       #battery.critical { color: #f38ba8; }
     '';

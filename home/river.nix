@@ -42,6 +42,10 @@
       riverctl map-pointer normal $mod BTN_LEFT move-view
       riverctl map-pointer normal $mod BTN_RIGHT resize-view
 
+      # Settings windows opened from waybar float instead of taking a tile.
+      riverctl rule-add -app-id '*pavucontrol' float
+      riverctl rule-add -app-id 'nm-connection-editor' float
+
       for i in $(seq 1 9); do
         tags=$((1 << (i - 1)))
         riverctl map normal $mod $i set-focused-tags $tags
