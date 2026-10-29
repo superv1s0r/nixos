@@ -1,4 +1,12 @@
 { pkgs, ... }:
+let
+  # confirm "Shut down" systemctl poweroff: runs the command only if "Yes" is picked.
+  confirm = pkgs.writeShellScript "confirm" ''
+    label=$1; shift
+    choice=$(printf 'No\nYes\n' | ${pkgs.fuzzel}/bin/fuzzel --dmenu --lines 2 --width 20 --prompt "$label? ")
+    [ "$choice" = Yes ] && exec "$@"
+  '';
+in
 {
   home.packages = with pkgs; [
     wl-clipboard
@@ -88,7 +96,7 @@
       margin-right = 6;
       modules-left = [ "river/tags" ];
       modules-center = [ "river/window" ];
-      modules-right = [ "tray" "custom/kb" "pulseaudio" "pulseaudio/slider" "network" "backlight" "battery" "power-profiles-daemon" "clock" ];
+      modules-right = [ "tray" "custom/kb" "pulseaudio" "pulseaudio/slider" "network" "backlight" "battery" "power-profiles-daemon" "clock" "group/power" ];
       clock.format = "{:%a %d %b  %H:%M}";
       battery = {
         format = "{icon} {capacity}%";
@@ -111,6 +119,17 @@
       };
       "pulseaudio/slider" = { min = 0; max = 100; };
       # Written by kb-layout (river.nix), which sends RTMIN+8 on every switch.
+      # Power icon; hovering slides out lock/logout/sleep/reboot/shutdown.
+      "group/power" = {
+        orientation = "inherit";
+        drawer = { transition-duration = 300; transition-left-to-right = false; children-class = "power-child"; };
+        modules = [ "custom/power" "custom/lock" "custom/logout" "custom/suspend" "custom/reboot" ];
+      };
+      "custom/power" = { format = "⏻"; tooltip-format = "Shut down"; on-click = "${confirm} 'Shut down' systemctl poweroff"; };
+      "custom/reboot" = { format = "󰜉"; tooltip-format = "Restart"; on-click = "${confirm} Restart systemctl reboot"; };
+      "custom/suspend" = { format = "󰤄"; tooltip-format = "Sleep"; on-click = "systemctl suspend"; };
+      "custom/logout" = { format = "󰍃"; tooltip-format = "Log out"; on-click = "riverctl exit"; };
+      "custom/lock" = { format = "󰌾"; tooltip-format = "Lock"; on-click = "loginctl lock-session"; };
       "custom/kb" = {
         exec = "tr a-z A-Z < $XDG_RUNTIME_DIR/kb-layout";
         interval = "once";
@@ -152,6 +171,15 @@
       #battery.warning { color: #f9e2af; }
       #battery.critical { color: #f38ba8; }
       #clock { color: #cba6f7; }
+
+      #power { background: #1e1e2e; border-radius: 10px; padding: 0 4px; }
+      #custom-power, #custom-reboot, #custom-suspend, #custom-logout, #custom-lock { padding: 0 8px; font-size: 14px; }
+      #custom-power { color: #f38ba8; }
+      #custom-reboot { color: #fab387; }
+      #custom-suspend { color: #89b4fa; }
+      #custom-logout { color: #cba6f7; }
+      #custom-lock { color: #a6e3a1; }
+      .power-child:hover { background: #313244; border-radius: 7px; }
     '';
   };
 }
