@@ -18,7 +18,7 @@ let
   '';
 in
 {
-  home.packages = with pkgs; [ brightnessctl playerctl ];
+  home.packages = with pkgs; [ brightnessctl playerctl swaybg ];
 
   # greetd starts river without a login shell, so this target stands in for
   # what a full DE does: it pulls in graphical-session.target, which starts
@@ -102,6 +102,11 @@ in
       export XDG_CURRENT_DESKTOP=river
       dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP
       systemctl --user start river-session.target
+
+      # Replace ~/Pictures/wallpaper (any image format) and press Super+Shift+W.
+      riverctl background-color 0x1e1e2e
+      riverctl spawn "swaybg -m fill -i $HOME/Pictures/wallpaper"
+      riverctl map normal $mod+Shift W spawn "pkill swaybg; swaybg -m fill -i $HOME/Pictures/wallpaper"
 
       riverctl default-layout rivertile
       exec rivertile -view-padding 4 -outer-padding 4
