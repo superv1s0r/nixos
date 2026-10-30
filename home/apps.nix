@@ -13,6 +13,7 @@ in
     grim
     slurp
     wlr-randr
+    libnotify # notify-send
     pavucontrol
     networkmanagerapplet
     keepassxc
