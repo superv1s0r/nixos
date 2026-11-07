@@ -75,7 +75,7 @@ in
         dpi-aware = "no";
         terminal = "alacritty";
         lines = 8;
-        width = 32;
+        width = 64;
         icons-enabled = "yes";
         horizontal-pad = 14;
         vertical-pad = 10;
