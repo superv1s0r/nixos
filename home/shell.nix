@@ -6,7 +6,7 @@
     syntaxHighlighting.enable = true;
     history.size = 50000;
     shellAliases = {
-      rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config#lnv";
+      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#lnv";
     };
   };
 

@@ -128,10 +128,8 @@ in
 
   programs.eww = {
     enable = true;
-    configDir = pkgs.linkFarm "eww-config" [
-      { name = "eww.yuck"; path = pkgs.writeText "eww.yuck" yuck; }
-      { name = "eww.css"; path = pkgs.writeText "eww.css" css; }
-    ];
+    yuckConfig = yuck;
+    scssConfig = css; # plain CSS is valid SCSS
   };
 
   programs.waybar = {
