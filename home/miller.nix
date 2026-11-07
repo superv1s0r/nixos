@@ -7,6 +7,7 @@
     ./idle.nix
     ./monitors.nix
     ./apps.nix
+    ./bar.nix
   ];
 
   home.username = "miller";
