@@ -69,9 +69,32 @@ in
 
   programs.fuzzel = {
     enable = true;
-    settings.main = {
-      font = "FiraCode Nerd Font:size=11";
-      terminal = "alacritty";
+    settings = {
+      main = {
+        font = "FiraCode Nerd Font:size=10";
+        dpi-aware = "no";
+        terminal = "alacritty";
+        lines = 8;
+        width = 32;
+        icons-enabled = "yes";
+        horizontal-pad = 14;
+        vertical-pad = 10;
+        inner-pad = 8;
+        line-height = 22;
+      };
+      border = { width = 1; radius = 12; };
+      # Same palette as the bar (bar.nix). Format: RRGGBBAA.
+      colors = {
+        background = "111723f2";
+        text = "d7e0eeff";
+        prompt = "5aa7e6ff";
+        input = "d7e0eeff";
+        match = "5aa7e6ff";
+        selection = "3b82c4ff";
+        selection-text = "ffffffff";
+        selection-match = "ffffffff";
+        border = "2a3446ff";
+      };
     };
   };
 
