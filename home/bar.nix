@@ -44,15 +44,15 @@ let
           (label :class "icon" :text icon)
           (label :text label :limit-width 30))))
 
-    (defwindow closer :stacking "overlay" :exclusive false :focusable false
+    (defwindow closer :monitor 0 :stacking "overlay" :exclusive false :focusable false
         :geometry (geometry :width "100%" :height "100%" :anchor "top center")
       (eventbox :onclick "${eww} close-all" :onrightclick "${eww} close-all"))
 
-    (defwindow calendar :stacking "overlay" :exclusive false :focusable false
+    (defwindow calendar :monitor 0 :stacking "overlay" :exclusive false :focusable false
         :geometry (geometry :y "6px" :anchor "top center")
       (box :class "panel" (calendar)))
 
-    (defwindow system :stacking "overlay" :exclusive false :focusable false
+    (defwindow system :monitor 0 :stacking "overlay" :exclusive false :focusable false
         :geometry (geometry :x "8px" :y "6px" :width "300px" :anchor "top right")
       (box :class "panel" :orientation "v" :space-evenly false :spacing 10
         (label :class "title" :xalign 0 :text "System")
@@ -64,7 +64,7 @@ let
         (progress :value {EWW_DISK["/"].used_perc})
         (row :icon "󰄪" :label "Open btop" :onclick "${eww} close-all; alacritty -e btop &")))
 
-    (defwindow wifi :stacking "overlay" :exclusive false :focusable false
+    (defwindow wifi :monitor 0 :stacking "overlay" :exclusive false :focusable false
         :geometry (geometry :x "8px" :y "6px" :width "320px" :anchor "top right")
       (box :class "panel" :orientation "v" :space-evenly false :spacing 4
         (box :space-evenly false
@@ -77,7 +77,7 @@ let
               :onclick "nmcli dev wifi connect ''${net.bssid}" :timeout "30s")))
         (row :icon "󰒓" :label "All network settings" :onclick "${eww} close-all; alacritty -e nmtui &")))
 
-    (defwindow audio :stacking "overlay" :exclusive false :focusable false
+    (defwindow audio :monitor 0 :stacking "overlay" :exclusive false :focusable false
         :geometry (geometry :x "8px" :y "6px" :width "300px" :anchor "top right")
       (box :class "panel" :orientation "v" :space-evenly false :spacing 10
         (label :class "title" :xalign 0 :text "Sound")
@@ -91,7 +91,7 @@ let
           (label :text "''${brightness}%"))
         (row :icon "󰒓" :label "Audio mixer" :onclick "${eww} close-all; pavucontrol &")))
 
-    (defwindow power :stacking "overlay" :exclusive false :focusable false
+    (defwindow power :monitor 0 :stacking "overlay" :exclusive false :focusable false
         :geometry (geometry :x "8px" :y "6px" :width "220px" :anchor "top right")
       (box :class "panel" :orientation "v" :space-evenly false :spacing 2
         (row :icon "󰌾" :label "Lock" :onclick "${eww} close-all; loginctl lock-session")
